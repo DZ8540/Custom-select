@@ -1,0 +1,64 @@
+.Select
+  position: relative
+  &__inputBlock
+    display: flex
+    justify-content: space-between
+    align-items: center
+    width: 250px
+    padding: 10px 20px
+    background-color: #fff
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.15)
+    border-radius: 69px
+    cursor: pointer
+  &__input, &__icon, &__text
+    font-family: sans-serif
+    font-size: 20px
+    color: #333
+  &__icon
+    font-size: 15px
+    transition: .3s
+    &::selection
+      background-color: none
+    &--active
+      transform: rotate(180deg)
+  &__select
+    position: absolute
+    width: 100%
+    top: calc(100% + 40px)
+    opacity: 0
+    margin: 0
+    border-radius: 20px
+    padding: 20px
+    background-color: #fff
+    list-style: none
+    box-shadow: 5px 10px 30px rgba(0, 0, 0, 0.15)
+    overflow: hidden
+    z-index: -1
+    box-sizing: border-box
+    transition: .3s
+    &--active
+      top: calc(100% + 20px)
+      opacity: 1
+      z-index: 10
+  &__item
+    margin-bottom: 15px
+    &:last-child
+      margin-bottom: 0
+  &__text
+    display: flex
+    width: 100%
+    cursor: pointer
+    position: relative
+    align-items: center
+    &::after
+      content: '▼'
+      color: #333
+      transform: rotate(90deg)
+      position: absolute
+      right: -40px
+      opacity: 0
+      font-size: 15px
+      transition: .5s
+    &--active::after, &:hover::after
+      right: 0
+      opacity: 1
