@@ -28,7 +28,7 @@ class Select {
   check() {
     let key, checked = false;
     for (const item of this.values) {
-      if (item.dataset.checked) {
+      if (item.dataset.checked == 'true') {
         checked = true;
         key = item;
       }
