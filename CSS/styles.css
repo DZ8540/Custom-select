@@ -50,6 +50,7 @@
 .Select__select {
   position: absolute;
   width: 100%;
+  max-height: 300px;
   top: calc(100% + 40px);
   opacity: 0;
   margin: 0;
@@ -60,17 +61,23 @@
   -webkit-box-shadow: 5px 10px 30px rgba(0, 0, 0, 0.15);
           box-shadow: 5px 10px 30px rgba(0, 0, 0, 0.15);
   overflow: hidden;
+  overflow-y: scroll;
   z-index: -1;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
   -webkit-transition: .3s;
   transition: .3s;
+  scrollbar-width: none;
 }
 
 .Select__select--active {
   top: calc(100% + 20px);
   opacity: 1;
   z-index: 10;
+}
+
+.Select__select::-webkit-scrollbar {
+  width: 0;
 }
 
 .Select__item {
