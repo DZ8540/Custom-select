@@ -8,6 +8,8 @@ In order to use, it is enough to find the element you need, and then pass it to 
 3. Your values should be in the data-value attribute.
 
 ## Example
+
+### HTML
 ```html
 <div class="Select" id="firstSelect">
   <input type="hidden" data-id="dz-input">
@@ -25,16 +27,20 @@ In order to use, it is enough to find the element you need, and then pass it to 
     <li class="Select__item">
       <span class="Select__text" data-id="dz-value" data-value="value2">Text 2</span>
     </li>
-    
     <li class="Select__item">
       <span class="Select__text" data-id="dz-value" data-value="value3" data-checked="true">Text 3</span>
     </li>
-    
     <li class="Select__item">
       <span class="Select__text" data-id="dz-value" data-value="value4">Text 4</span>
     </li>
   </ul>
 </div>
+```
+
+### JS
+```js
+let el = document.querySelector(el);
+new Select(el);
 ```
 
 ## End
