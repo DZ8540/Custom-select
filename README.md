@@ -12,7 +12,7 @@ In order to use, it is enough to find the element you need, and then pass it to 
 
 ### HTML
 ```html
-<div class="Select" data-name="firstSelect">
+<div class="Select" data-name="First select">
   <input type="hidden" data-id="dz-input">
 
   <div class="Select__inputBlock">
