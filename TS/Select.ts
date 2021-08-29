@@ -8,7 +8,7 @@ interface ISelect {
   input: HTMLInputElement | null,
   inputText: HTMLSpanElement | null,
   values: NodeListOf<HTMLSpanElement>,
-  readonly name: string | undefined,
+  readonly name: string,
   handle(): void,
   check(): void,
   change(parent: HTMLSpanElement): void,
@@ -28,7 +28,7 @@ class Select implements ISelect {
   input: HTMLInputElement | null;
   inputText: HTMLSpanElement | null;
   values: NodeListOf<HTMLSpanElement>;
-  readonly name: string | undefined;
+  readonly name: string;
 
   constructor(item: HTMLDivElement) {
     this.item = item;
