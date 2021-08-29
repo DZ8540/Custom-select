@@ -6,12 +6,13 @@ In order to use, it is enough to find the element you need, and then pass it to 
 1. Don't remove all data attributes.
 2. Your value could has a data-checked attribute with true value.
 3. Your values should be in the data-value attribute.
+4. Component maintains data-name attribute, to you can set component name.
 
 ## Example
 
 ### HTML
 ```html
-<div class="Select" id="firstSelect">
+<div class="Select" data-name="firstSelect">
   <input type="hidden" data-id="dz-input">
 
   <div class="Select__inputBlock">

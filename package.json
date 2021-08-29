@@ -1,0 +1,23 @@
+{
+  "name": "custom-select",
+  "version": "1.0.0",
+  "description": "In order to use, it is enough to find the element you need, and then pass it to the class.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DZ8540/Custom-select.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DZ8540/Custom-select/issues"
+  },
+  "homepage": "https://github.com/DZ8540/Custom-select#readme",
+  "devDependencies": {
+    "typescript": "^4.4.2"
+  }
+}
