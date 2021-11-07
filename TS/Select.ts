@@ -1,136 +1,106 @@
-interface ISelect {
-  readonly toggleTextClass: string,
-  readonly toggleSelectClass: string,
-  readonly toggleIconClass: string,
-  item: HTMLDivElement | null,
-  select: HTMLUListElement | null,
-  icon: HTMLSpanElement | null,
-  input: HTMLInputElement | null,
-  inputText: HTMLSpanElement | null,
-  values: NodeListOf<HTMLSpanElement>,
-  readonly name: string,
-  handle(): void,
-  check(): void,
-  change(parent: HTMLSpanElement): void,
-  removeAllActives(): void,
-  selectEvent(): void,
-  click(): void,
-  checkForUser(): boolean
-}
+class Select {
+  public readonly toggleSelectClass: string = 'Select--active';
+  public readonly toggleTextClass: string = 'Select__text--active';
+  public readonly name: string;
 
-class Select implements ISelect {
-  toggleTextClass: string = 'Select__text--active';
-  toggleSelectClass: string = 'Select__select--active';
-  toggleIconClass: string = 'Select__icon--active';
-  item: HTMLDivElement | null;
-  select: HTMLUListElement | null;
-  icon: HTMLSpanElement | null;
-  input: HTMLInputElement | null;
-  inputText: HTMLSpanElement | null;
-  values: NodeListOf<HTMLSpanElement>;
-  readonly name: string;
+  protected _item: HTMLDivElement | null;
+  protected _input: HTMLInputElement | null;
+  protected _inputText: HTMLSpanElement | null;
+  protected _values: NodeListOf<HTMLSpanElement>;
 
   constructor(item: HTMLDivElement) {
-    this.item = item;
-    this.select = this.item.querySelector('[data-id="dz-select"]');
-    this.icon = this.item.querySelector('[data-id="dz-icon"]');
-    this.input = this.item.querySelector('[data-id="dz-input"]');
-    this.inputText = this.item.querySelector('[data-id="dz-inputText"]');
-    this.values = this.item.querySelectorAll('[data-id="dz-value"]');
-    this.name = `${this.item.dataset.name || '(undefined name)'} select component`;
+    this._item = item;
+    this._input = this._item.querySelector('[data-id="dz-input"]');
+    this._inputText = this._item.querySelector('[data-id="dz-inputText"]');
+    this._values = this._item.querySelectorAll('[data-value]');
+    this.name = `${this._item.dataset.name || '(undefined name)'} select component`;
 
-    this.handle();
+    this._handle();
   }
 
-  handle(): void {
-    if (this.checkForUser()) {
-      this.check();
-      this.selectEvent();
+  protected _handle(): void {
+    try {
+      this._checkForUser()
 
-      this.item!.onclick = this.click.bind(this);
+      this._check();
+      this._selectEvent();
+
+      this._setEventsForSelect();
+    } catch (err: any | Error) {
+      console.warn(err.message);
     }
   }
 
-  click(): void {
-    this.select!.classList.toggle(this.toggleSelectClass);
-    this.icon!.classList.toggle(this.toggleIconClass);
-  }
-
-  check(): void {
+  protected _check(): void {
     let key: HTMLSpanElement, checked: boolean = false;
-    for (const item of this.values) {
-      if (item.dataset.checked == 'true') {
+
+    for (let item of this._values) {
+      if (item.dataset.checked != undefined) {
         checked = true;
         key = item;
       }
     }
 
-    checked ? this.change(key!) : this.change(this.values[0]);
+    checked ? this._change(key!) : this._change(this._values[0]);
   }
 
-  selectEvent(): void {
-    for (const item of this.values) {
-      item.onclick = this.change.bind(this, item);
+  protected _selectEvent(): void {
+    for (let item of this._values) {
+      item.onclick = this._change.bind(this, item);
     }
   }
 
-  change(parent: HTMLSpanElement): void {
-    this.input!.value = parent.dataset.value!;
-    this.inputText!.innerText = parent.innerText;
+  protected _setEventsForSelect(): void {
+    this._item!.onclick = this._clickHandler.bind(this);
+    this._item!.onblur = this._removeActive.bind(this);
+  }
 
-    this.removeAllActives();
+  protected _clickHandler(): void {
+    if (this._item!.classList.contains(this.toggleSelectClass))
+      this._removeActive();
+    else
+      this._addActive();
+  }
+
+  protected _change(parent: HTMLSpanElement): void {
+    this._input!.value = parent.dataset.value!;
+    this._inputText!.innerText = parent.innerText;
+
+    this._removeAllActives();
     parent.classList.add(this.toggleTextClass);
   }
 
-  removeAllActives(): void {
-    for (const item of this.values) {
+  protected _removeAllActives(): void {
+    for (let item of this._values) {
       item.classList.remove(this.toggleTextClass);
     }
   }
 
-  checkForUser(): boolean {
-    if (!this.item) {
-      console.warn('Component is not found!');
-      return false;
-    }
+  protected _addActive(): void {
+    this._item!.classList.add(this.toggleSelectClass);
+  }
 
-    if (!this.select) {
-      console.warn(`Ul list in ${this.name} is not found!`);
-      return false;
-    }
+  protected _removeActive(): void {
+    this._item!.classList.remove(this.toggleSelectClass);
+  }
 
-    if (!this.icon) {
-      console.warn(`Icon in ${this.name} is not found!`);
-      return false;
-    }
+  protected _checkForUser(): void {
+    if (!this._item)
+      throw new Error('Component is not found!');
 
-    if (!this.input) {
-      console.warn(`Input in ${this.name} is not found!`);
-      return false;
-    }
+    if (!this._input)
+      throw new Error(`Input in ${this.name} is not found!`);
 
-    if (!this.inputText) {
-      console.warn(`Input text in ${this.name} is not found!`);
-      return false;
-    }
+    if (!this._inputText)
+      throw new Error(`Input text in ${this.name} is not found!`);
 
-    if (!this.values.length) {
-      console.warn(`Values int ${this.name} are not found!`);
-      return false;
-    }
+    if (!this._values.length)
+      throw new Error(`Values int ${this.name} are not found!`);
 
-    let valueFlag: boolean = false;
-    for (const item of this.values) {
+    for (let item of this._values) {
       if (!item.dataset.value)
-        valueFlag = true;
+        throw new Error(`Value attribute in value of ul list in ${this.name} is not defined!`);
     }
-
-    if (valueFlag) {
-      console.warn(`Value attribute in value of ul list in ${this.name} is not defined!`);
-      return false;
-    }
-
     console.info(`${this.name} is ready`);
-    return true;
   }
 }

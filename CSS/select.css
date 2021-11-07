@@ -42,12 +42,7 @@
   background-color: none;
 }
 
-.Select__icon--active {
-  -webkit-transform: rotate(180deg);
-          transform: rotate(180deg);
-}
-
-.Select__select {
+.Select__list {
   position: absolute;
   width: 100%;
   max-height: 300px;
@@ -70,13 +65,7 @@
   scrollbar-width: none;
 }
 
-.Select__select--active {
-  top: calc(100% + 20px);
-  opacity: 1;
-  z-index: 10;
-}
-
-.Select__select::-webkit-scrollbar {
+.Select__list::-webkit-scrollbar {
   width: 0;
 }
 
@@ -116,5 +105,16 @@
 .Select__text--active::after, .Select__text:hover::after {
   right: 0;
   opacity: 1;
+}
+
+.Select--active .Select__icon {
+  -webkit-transform: rotate(180deg);
+          transform: rotate(180deg);
+}
+
+.Select--active .Select__list {
+  top: calc(100% + 20px);
+  opacity: 1;
+  z-index: 10;
 }
 /*# sourceMappingURL=select.css.map */

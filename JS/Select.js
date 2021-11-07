@@ -1,90 +1,82 @@
 "use strict";
 class Select {
     constructor(item) {
+        this.toggleSelectClass = 'Select--active';
         this.toggleTextClass = 'Select__text--active';
-        this.toggleSelectClass = 'Select__select--active';
-        this.toggleIconClass = 'Select__icon--active';
-        this.item = item;
-        this.select = this.item.querySelector('[data-id="dz-select"]');
-        this.icon = this.item.querySelector('[data-id="dz-icon"]');
-        this.input = this.item.querySelector('[data-id="dz-input"]');
-        this.inputText = this.item.querySelector('[data-id="dz-inputText"]');
-        this.values = this.item.querySelectorAll('[data-id="dz-value"]');
-        this.name = `${this.item.dataset.name || '(undefined name)'} select component`;
-        this.handle();
+        this._item = item;
+        this._input = this._item.querySelector('[data-id="dz-input"]');
+        this._inputText = this._item.querySelector('[data-id="dz-inputText"]');
+        this._values = this._item.querySelectorAll('[data-value]');
+        this.name = `${this._item.dataset.name || '(undefined name)'} select component`;
+        console.log(this._values);
+        this._handle();
     }
-    handle() {
-        if (this.checkForUser()) {
-            this.check();
-            this.selectEvent();
-            this.item.onclick = this.click.bind(this);
+    _handle() {
+        try {
+            this._checkForUser();
+            this._check();
+            this._selectEvent();
+            this._setEventsForSelect();
+        }
+        catch (err) {
+            console.warn(err.message);
         }
     }
-    click() {
-        this.select.classList.toggle(this.toggleSelectClass);
-        this.icon.classList.toggle(this.toggleIconClass);
-    }
-    check() {
+    _check() {
         let key, checked = false;
-        for (const item of this.values) {
-            if (item.dataset.checked == 'true') {
+        for (let item of this._values) {
+            if (item.dataset.checked != undefined) {
                 checked = true;
                 key = item;
             }
         }
-        checked ? this.change(key) : this.change(this.values[0]);
+        checked ? this._change(key) : this._change(this._values[0]);
     }
-    selectEvent() {
-        for (const item of this.values) {
-            item.onclick = this.change.bind(this, item);
+    _selectEvent() {
+        for (let item of this._values) {
+            item.onclick = this._change.bind(this, item);
         }
     }
-    change(parent) {
-        this.input.value = parent.dataset.value;
-        this.inputText.innerText = parent.innerText;
-        this.removeAllActives();
+    _setEventsForSelect() {
+        this._item.onclick = this._clickHandler.bind(this);
+        this._item.onblur = this._removeActive.bind(this);
+    }
+    _clickHandler() {
+        if (this._item.classList.contains(this.toggleSelectClass))
+            this._removeActive();
+        else
+            this._addActive();
+    }
+    _change(parent) {
+        this._input.value = parent.dataset.value;
+        this._inputText.innerText = parent.innerText;
+        this._removeAllActives();
         parent.classList.add(this.toggleTextClass);
     }
-    removeAllActives() {
-        for (const item of this.values) {
+    _removeAllActives() {
+        for (let item of this._values) {
             item.classList.remove(this.toggleTextClass);
         }
     }
-    checkForUser() {
-        if (!this.item) {
-            console.warn('Component is not found!');
-            return false;
-        }
-        if (!this.select) {
-            console.warn(`Ul list in ${this.name} is not found!`);
-            return false;
-        }
-        if (!this.icon) {
-            console.warn(`Icon in ${this.name} is not found!`);
-            return false;
-        }
-        if (!this.input) {
-            console.warn(`Input in ${this.name} is not found!`);
-            return false;
-        }
-        if (!this.inputText) {
-            console.warn(`Input text in ${this.name} is not found!`);
-            return false;
-        }
-        if (!this.values.length) {
-            console.warn(`Values int ${this.name} are not found!`);
-            return false;
-        }
-        let valueFlag = false;
-        for (const item of this.values) {
+    _addActive() {
+        this._item.classList.add(this.toggleSelectClass);
+    }
+    _removeActive() {
+        this._item.classList.remove(this.toggleSelectClass);
+    }
+    _checkForUser() {
+        if (!this._item)
+            throw new Error('Component is not found!');
+        if (!this._input)
+            throw new Error(`Input in ${this.name} is not found!`);
+        if (!this._inputText)
+            throw new Error(`Input text in ${this.name} is not found!`);
+        if (!this._values.length)
+            throw new Error(`Values int ${this.name} are not found!`);
+        for (let item of this._values) {
             if (!item.dataset.value)
-                valueFlag = true;
-        }
-        if (valueFlag) {
-            console.warn(`Value attribute in value of ul list in ${this.name} is not defined!`);
-            return false;
+                throw new Error(`Value attribute in value of ul list in ${this.name} is not defined!`);
         }
         console.info(`${this.name} is ready`);
-        return true;
     }
 }
