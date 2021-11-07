@@ -107,6 +107,14 @@
   opacity: 1;
 }
 
+.Select__text--disabled {
+  opacity: .5;
+}
+
+.Select__text--disabled::after {
+  opacity: 0 !important;
+}
+
 .Select--active .Select__icon {
   -webkit-transform: rotate(180deg);
           transform: rotate(180deg);

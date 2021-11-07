@@ -1,7 +1,8 @@
 class Select {
-  public readonly toggleSelectClass: string = 'Select--active';
-  public readonly toggleTextClass: string = 'Select__text--active';
   public readonly name: string;
+  public readonly toggleSelectClass: string = 'Select--active';
+  public readonly activeTextClass: string = 'Select__text--active';
+  public readonly disableTextClass: string = 'Select__text--disabled';
 
   protected _item: HTMLDivElement | null;
   protected _input: HTMLInputElement | null;
@@ -35,9 +36,11 @@ class Select {
     let key: HTMLSpanElement, checked: boolean = false;
 
     for (let item of this._values) {
-      if (item.dataset.checked != undefined) {
+      if (item.dataset.checked !== undefined) {
         checked = true;
         key = item;
+      } else if (item.dataset.disabled !== undefined) {
+        item.classList.add(this.disableTextClass);
       }
     }
 
@@ -46,7 +49,8 @@ class Select {
 
   protected _selectEvent(): void {
     for (let item of this._values) {
-      item.onclick = this._change.bind(this, item);
+      if (item.dataset.disabled === undefined)
+        item.onclick = this._change.bind(this, item);
     }
   }
 
@@ -67,12 +71,12 @@ class Select {
     this._inputText!.innerText = parent.innerText;
 
     this._removeAllActives();
-    parent.classList.add(this.toggleTextClass);
+    parent.classList.add(this.activeTextClass);
   }
 
   protected _removeAllActives(): void {
     for (let item of this._values) {
-      item.classList.remove(this.toggleTextClass);
+      item.classList.remove(this.activeTextClass);
     }
   }
 

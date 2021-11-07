@@ -2,13 +2,13 @@
 class Select {
     constructor(item) {
         this.toggleSelectClass = 'Select--active';
-        this.toggleTextClass = 'Select__text--active';
+        this.activeTextClass = 'Select__text--active';
+        this.disableTextClass = 'Select__text--disabled';
         this._item = item;
         this._input = this._item.querySelector('[data-id="dz-input"]');
         this._inputText = this._item.querySelector('[data-id="dz-inputText"]');
         this._values = this._item.querySelectorAll('[data-value]');
         this.name = `${this._item.dataset.name || '(undefined name)'} select component`;
-        console.log(this._values);
         this._handle();
     }
     _handle() {
@@ -25,16 +25,20 @@ class Select {
     _check() {
         let key, checked = false;
         for (let item of this._values) {
-            if (item.dataset.checked != undefined) {
+            if (item.dataset.checked !== undefined) {
                 checked = true;
                 key = item;
+            }
+            else if (item.dataset.disabled !== undefined) {
+                item.classList.add(this.disableTextClass);
             }
         }
         checked ? this._change(key) : this._change(this._values[0]);
     }
     _selectEvent() {
         for (let item of this._values) {
-            item.onclick = this._change.bind(this, item);
+            if (item.dataset.disabled === undefined)
+                item.onclick = this._change.bind(this, item);
         }
     }
     _setEventsForSelect() {
@@ -51,11 +55,11 @@ class Select {
         this._input.value = parent.dataset.value;
         this._inputText.innerText = parent.innerText;
         this._removeAllActives();
-        parent.classList.add(this.toggleTextClass);
+        parent.classList.add(this.activeTextClass);
     }
     _removeAllActives() {
         for (let item of this._values) {
-            item.classList.remove(this.toggleTextClass);
+            item.classList.remove(this.activeTextClass);
         }
     }
     _addActive() {

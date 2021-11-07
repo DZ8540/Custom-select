@@ -61,6 +61,10 @@
     &--active::after, &:hover::after
       right: 0
       opacity: 1
+    &--disabled
+      opacity: .5
+    &--disabled::after
+      opacity: 0 !important
   &--active
     .Select
       &__icon
