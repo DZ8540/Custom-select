@@ -1,110 +1,276 @@
-class Select {
+class SelectHeader {
   public readonly name: string;
   public readonly toggleSelectClass: string = 'Select--active';
   public readonly activeTextClass: string = 'Select__text--active';
   public readonly disableTextClass: string = 'Select__text--disabled';
 
   protected _item: HTMLDivElement | null;
-  protected _input: HTMLInputElement | null;
-  protected _inputText: HTMLSpanElement | null;
-  protected _values: NodeListOf<HTMLSpanElement>;
+  protected _text: HTMLSpanElement | null;
 
   constructor(item: HTMLDivElement) {
     this._item = item;
-    this._input = this._item.querySelector('[data-id="dz-input"]');
-    this._inputText = this._item.querySelector('[data-id="dz-inputText"]');
-    this._values = this._item.querySelectorAll('[data-value]');
-    this.name = `${this._item.dataset.name || '(undefined name)'} select component`;
+    this._text = this._item!.querySelector('[data-id="dz-inputText"]');
+    this.name = `${this._item!.dataset.name || '(undefined name)'} select component`;
+
+    this._headerHandle();
+  }
+
+  protected _headerSetText({ innerHTML }: HTMLSpanElement): void {
+    this._text!.innerHTML = innerHTML;
+  }
+
+  private _headerHandle(): void {
+    try {
+      this._headerCheckForUser();
+
+      this._headerSetEvents();
+    } catch (err: any | Error) {
+      console.warn(err.message);
+    }
+  }
+
+  private _headerSetEvents(): void {
+    this._item!.onclick = this._headerClickHandler.bind(this);
+    this._item!.onblur = this._headerRemoveActive.bind(this);
+  }
+
+  private _headerClickHandler(): void {
+    if (this._item!.classList.contains(this.toggleSelectClass))
+      this._headerRemoveActive();
+    else
+      this._headerAddActive();
+  }
+
+  private _headerAddActive(): void {
+    this._item!.classList.add(this.toggleSelectClass);
+  }
+
+  private _headerRemoveActive(): void {
+    this._item!.classList.remove(this.toggleSelectClass);
+  }
+
+  private _headerCheckForUser(): void {
+    if (!this._item)
+      throw new Error('Component is not found!');
+
+    if (!this._text)
+      throw new Error(`Input text in ${this.name} is not found!`);
+  }
+}
+
+class Select extends SelectHeader {
+  protected _input: HTMLInputElement | null;
+  protected _values: NodeListOf<HTMLSpanElement>;
+
+  constructor(item: HTMLDivElement) {
+    super(item);
+
+    this._input = this._item!.querySelector('[data-id="dz-input"]');
+    this._values = this._item!.querySelectorAll('[data-value]');
+
+    this._handle();
+  }
+
+  private _handle(): void {
+    try {
+      this._checkForUser();
+
+      this._findChecked();
+      this._findDisabled();
+
+      this._setClickHandler();
+      console.log(this._input!.value);
+    } catch (err: any | Error) {
+      console.warn(err.message);
+    }
+  }
+
+  protected _findChecked(): void {
+    for (let item of this._values) {
+      if (item.dataset.checked !== undefined && item.dataset.disabled === undefined) {
+        this._set(item); 
+        return;
+      }
+    }
+
+    for (let i = 0; i < this._values.length; i++) {
+      if (this._values[i].dataset.disabled === undefined) {
+        this._set(this._values[i]);
+        return;
+      }
+    }
+  }
+
+  protected _findDisabled(): void {
+    for (let item of this._values) {
+      if (item.dataset.disabled !== undefined)
+        item.classList.add(this.disableTextClass);
+    }
+  }
+
+  protected _setClickHandler(): void {
+    for (let item of this._values) {
+      if (item.dataset.disabled === undefined)
+        item.onclick = this._clickHandler.bind(this, item);
+    }
+  }
+
+  protected _clickHandler(el: HTMLSpanElement): void {
+    let active = el;
+    this._reset();
+
+    this._set(active);
+  }
+
+  protected _reset(): void {
+    for (let item of this._values) {
+      this._unset(item);
+    }
+  }
+
+  protected _setValue({ dataset }: HTMLSpanElement): void {
+    this._input!.value = dataset.value!;
+  }
+
+  protected _set(el: HTMLSpanElement): void {
+    if (el.dataset.disabled === undefined) {
+      el.classList.add(this.activeTextClass);
+      el.dataset.checked = '';
+
+      this._headerSetText(el);
+      this._setValue(el);
+    }
+  }
+
+  protected _unset(el: HTMLSpanElement): void {
+    el.classList.remove(this.activeTextClass);
+    el.dataset.checked = undefined;
+  }
+
+  protected _checkForUser(): void {
+    if (!this._input)
+      throw new Error(`Input in ${this.name} is not found!`);
+
+    if (!this._values.length)
+      throw new Error(`Values in ${this.name} are not found!`);
+
+    console.info(`${this.name} is ready`);
+  }
+}
+
+class MultipleSelect extends SelectHeader {
+  public value: string[] = [];
+
+  protected _input: HTMLInputElement | null;
+  protected _values: NodeListOf<HTMLSpanElement>;
+
+  constructor(item: HTMLDivElement) {
+    super(item);
+
+    this._input = this._item!.querySelector('[data-id="dz-input"]');
+    this._values = this._item!.querySelectorAll('[data-value]');
 
     this._handle();
   }
 
   protected _handle(): void {
     try {
-      this._checkForUser()
+      this._checkForUser();
 
-      this._check();
-      this._selectEvent();
+      this._findChecked();
+      this._findDisabled();
 
-      this._setEventsForSelect();
+      this._setClickHandler();
     } catch (err: any | Error) {
       console.warn(err.message);
     }
   }
 
-  protected _check(): void {
-    let key: HTMLSpanElement, checked: boolean = false;
+  protected _findChecked(): void {
+    let checked: boolean = false;
 
     for (let item of this._values) {
-      if (item.dataset.checked !== undefined) {
+      if (item.dataset.checked !== undefined && item.dataset.disabled === undefined) {
+        this._set(item); 
         checked = true;
-        key = item;
-      } else if (item.dataset.disabled !== undefined) {
-        item.classList.add(this.disableTextClass);
       }
     }
 
-    checked ? this._change(key!) : this._change(this._values[0]);
+    if (!checked) {
+      for (let i = 0; i < this._values.length; i++) {
+        if (this._values[i].dataset.disabled === undefined) {
+          this._set(this._values[i]);
+          return;
+        }
+      }
+    }
   }
 
-  protected _selectEvent(): void {
+  protected _findDisabled(): void {
+    for (let item of this._values) {
+      if (item.dataset.disabled !== undefined)
+        item.classList.add(this.disableTextClass);
+    }
+  }
+
+  protected _setClickHandler(): void {
     for (let item of this._values) {
       if (item.dataset.disabled === undefined)
-        item.onclick = this._change.bind(this, item);
+        item.onclick = this._clickHandler.bind(this, item);
     }
   }
 
-  protected _setEventsForSelect(): void {
-    this._item!.onclick = this._clickHandler.bind(this);
-    this._item!.onblur = this._removeActive.bind(this);
-  }
-
-  protected _clickHandler(): void {
-    if (this._item!.classList.contains(this.toggleSelectClass))
-      this._removeActive();
+  protected _clickHandler(el: HTMLSpanElement): void {
+    if (!el.classList.contains(this.activeTextClass))
+      this._set(el);
     else
-      this._addActive();
+      this._unset(el);
   }
 
-  protected _change(parent: HTMLSpanElement): void {
-    this._input!.value = parent.dataset.value!;
-    this._inputText!.innerText = parent.innerText;
-
-    this._removeAllActives();
-    parent.classList.add(this.activeTextClass);
+  protected _headerSetText(): void {
+    this._text!.innerHTML = `${this.value.length}`;
   }
 
-  protected _removeAllActives(): void {
-    for (let item of this._values) {
-      item.classList.remove(this.activeTextClass);
+  protected _set(el: HTMLSpanElement): void {
+    if (el.dataset.disabled === undefined) {
+      el.classList.add(this.activeTextClass);
+      el.dataset.checked = '';
+
+      this._setValue(el);
+      this._headerSetText();
     }
   }
 
-  protected _addActive(): void {
-    this._item!.classList.add(this.toggleSelectClass);
+  protected _unset(el: HTMLSpanElement): void {
+    if (el.dataset.disabled === undefined) {
+      el.classList.remove(this.activeTextClass);
+      el.dataset.checked = undefined;
+
+      this._unsetValue(el);
+      this._headerSetText();
+    }
   }
 
-  protected _removeActive(): void {
-    this._item!.classList.remove(this.toggleSelectClass);
+  protected _setValue({ dataset }: HTMLSpanElement): void {
+    this.value.push(dataset.value!);
+    this._input!.value = JSON.stringify(this.value);
+  }
+
+  protected _unsetValue({ dataset }: HTMLSpanElement): void {
+    this.value = this.value.filter((val: string) => val != dataset.value);
+    this._input!.value = JSON.stringify(this.value);
   }
 
   protected _checkForUser(): void {
-    if (!this._item)
-      throw new Error('Component is not found!');
+    if (this._item!.dataset.multiple === undefined)
+      throw new Error(`${this.name} will has data-multiple attribute!`);
 
     if (!this._input)
       throw new Error(`Input in ${this.name} is not found!`);
 
-    if (!this._inputText)
-      throw new Error(`Input text in ${this.name} is not found!`);
-
     if (!this._values.length)
-      throw new Error(`Values int ${this.name} are not found!`);
-
-    for (let item of this._values) {
-      if (!item.dataset.value)
-        throw new Error(`Value attribute in value of ul list in ${this.name} is not defined!`);
-    }
-    console.info(`${this.name} is ready`);
+      throw new Error(`Values in ${this.name} are not found!`);
+      
+    console.info(`${this.name} is ready.`);
   }
 }

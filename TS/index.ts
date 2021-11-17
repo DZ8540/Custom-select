@@ -6,6 +6,6 @@ else
 
 let secondSelect: HTMLDivElement | null = document.querySelector('#secondSelect');
 if (secondSelect)
-  new Select(secondSelect);
+  new MultipleSelect(secondSelect);
 else
   console.warn('Select is not found!');
