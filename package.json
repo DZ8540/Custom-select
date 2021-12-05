@@ -1,23 +1,25 @@
 {
-  "name": "custom-select",
+  "name": "@dz8540/custom-select",
   "version": "1.0.0",
-  "description": "In order to use, it is enough to find the element you need, and then pass it to the class.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "description": "DZ's custom select component library.",
+  "main": "/Dist/JS/All selects/CustomSelect.min.js",
+  "types": "customSelect.d.ts",
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DZ8540/Custom-select.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "DZ",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/DZ8540/Custom-select/issues"
   },
   "homepage": "https://github.com/DZ8540/Custom-select#readme",
   "devDependencies": {
-    "typescript": "^4.4.2"
+    "sass": "^1.44.0",
+    "typescript": "^4.5.2"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }

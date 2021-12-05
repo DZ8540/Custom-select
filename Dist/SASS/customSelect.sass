@@ -1,0 +1,105 @@
+// Fonts
+$regular: 'Font - regular', sans-serif
+// Fonts
+
+// Colors
+$light: #fff
+$lightest: #f2f2f2
+$lightShadow: 5px 5px 15px rgba(0, 0, 0, 0.15)
+$lightBigShadow: 5px 10px 30px rgba(0, 0, 0, 0.15)
+
+$dark: #333
+$darker: #242424
+$darkShadow: 5px 5px 15px rgba(0, 0, 0, 0.25)
+$darkBigShadow: 5px 10px 30px rgba(0, 0, 0, 0.25)
+// Colors
+
+.Select
+  position: relative
+  &__inputBlock
+    display: flex
+    justify-content: space-between
+    align-items: center
+    width: 250px
+    padding: 10px 20px
+    border-radius: 69px
+    cursor: pointer
+  &__input, &__icon, &__text
+    font-family: $regular
+    font-size: 20px
+  &__icon
+    font-size: 15px
+    transition: .3s
+    &::selection
+      background-color: none
+  &__list
+    position: absolute
+    width: 100%
+    max-height: 300px
+    top: calc(100% + 40px)
+    opacity: 0
+    margin: 0
+    border-radius: 20px
+    padding: 20px !important
+    list-style: none
+    overflow: hidden
+    overflow-y: scroll
+    z-index: -1
+    box-sizing: border-box
+    transition: .3s
+    scrollbar-width: none
+    &::-webkit-scrollbar
+      width: 0
+  &__item
+    margin-bottom: 15px
+    &:last-child
+      margin-bottom: 0
+  &__text
+    display: flex
+    width: 100%
+    cursor: pointer
+    position: relative
+    align-items: center
+    &::after
+      content: '▼'
+      transform: rotate(90deg)
+      position: absolute
+      right: -40px
+      opacity: 0
+      font-size: 15px
+      transition: .5s
+    &--active::after, &:hover::after
+      right: 0
+      opacity: 1
+    &--disabled
+      opacity: .5
+    &--disabled::after
+      opacity: 0 !important
+  &--active
+    .Select
+      &__icon
+        transform: rotate(180deg)
+      &__list
+        top: calc(100% + 20px)
+        opacity: 1
+        z-index: 10
+  @media (prefers-color-scheme: light)
+    .Select
+      &__inputBlock
+        background-color: $light
+        box-shadow: $lightShadow
+      &__input, &__icon, &__text, &__text::after
+        color: $dark
+      &__list
+        background-color: $light
+        box-shadow: $lightBigShadow
+  @media (prefers-color-scheme: dark)
+    .Select
+      &__inputBlock
+        background-color: $dark
+        box-shadow: $darkShadow
+      &__input, &__icon, &__text, &__text::after
+        color: $light
+      &__list
+        background-color: $dark
+        box-shadow: $darkBigShadow
