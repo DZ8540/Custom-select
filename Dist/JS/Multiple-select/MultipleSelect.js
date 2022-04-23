@@ -122,6 +122,7 @@ class MultipleSelect extends SelectHeader {
     _setValue({ dataset }) {
         this.value.push(dataset.value);
         this._input.value = JSON.stringify(this.value);
+        this._input.dispatchEvent(new Event('change'));
     }
     _unsetValue({ dataset }) {
         this.value = this.value.filter((val) => val != dataset.value);

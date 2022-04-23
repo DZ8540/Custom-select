@@ -102,6 +102,7 @@ class Select extends SelectHeader {
     }
     _setValue({ dataset }) {
         this._input.value = dataset.value;
+        this._input.dispatchEvent(new Event('change'));
     }
     _set(el) {
         if (el.dataset.disabled === undefined) {
