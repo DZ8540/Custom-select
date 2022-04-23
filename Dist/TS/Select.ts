@@ -129,6 +129,7 @@ export class Select extends SelectHeader {
 
   protected _setValue({ dataset }: HTMLSpanElement): void {
     this._input!.value = dataset.value!;
+    this._input!.dispatchEvent(new Event('change'));
   }
 
   protected _set(el: HTMLSpanElement): void {

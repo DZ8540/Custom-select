@@ -154,6 +154,7 @@ export class MultipleSelect extends SelectHeader {
   protected _setValue({ dataset }: HTMLSpanElement): void {
     this.value.push(dataset.value!);
     this._input!.value = JSON.stringify(this.value);
+    this._input!.dispatchEvent(new Event('change'));
   }
 
   protected _unsetValue({ dataset }: HTMLSpanElement): void {

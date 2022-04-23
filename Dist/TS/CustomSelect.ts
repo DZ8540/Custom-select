@@ -129,6 +129,7 @@ export class Select extends SelectHeader {
 
   protected _setValue({ dataset }: HTMLSpanElement): void {
     this._input!.value = dataset.value!;
+    this._input!.dispatchEvent(new Event('change'));
   }
 
   protected _set(el: HTMLSpanElement): void {
@@ -253,6 +254,7 @@ export class MultipleSelect extends SelectHeader {
   protected _setValue({ dataset }: HTMLSpanElement): void {
     this.value.push(dataset.value!);
     this._input!.value = JSON.stringify(this.value);
+    this._input!.dispatchEvent(new Event('change'));
   }
 
   protected _unsetValue({ dataset }: HTMLSpanElement): void {
